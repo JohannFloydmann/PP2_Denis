@@ -1,6 +1,7 @@
 thislist = ["apple", "banana", "cherry"]
 for i in range(len(thislist)):
   print(thislist[i])
+
 [print(x) for x in thislist]
 
 #comperhension
@@ -15,6 +16,6 @@ for x in fruits:
 print(newlist)
 
 #2 way
-newlist = [x for x in fruits if "a" in x]
+newlist = [x+' ' for x in fruits if "a" in x]
 
 print(newlist)
