@@ -7,3 +7,4 @@ for x in fruits:
 
 for x in range(2, 30, 3):
   print(x)
+  print(x*2)
