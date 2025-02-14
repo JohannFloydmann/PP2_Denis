@@ -33,7 +33,7 @@ def info(data : dict, headings: dict):
 
 # MAIN
 print("Interface Status")
-print('=' * sum(headings.values()))
+print('=' * sum(headings.values(), len(headings.keys())-1))
 # headings
 for head in getHeading(headings):
     print(head, end=' ')
