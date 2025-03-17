@@ -29,9 +29,9 @@ while flak:
                 if event.type == pygame.QUIT:
                         flak = False
 
-        watch = get_image("week7\clock\clock.png")
-        h_arrow = get_image("week7\clock\min_hand.png")
-        m_arrow = get_image("week7\clock\sec_hand.png")
+        watch = get_image("PP2\week7\clock\clock.png")
+        h_arrow = get_image("PP2\week7\clock\min_hand.png")
+        m_arrow = get_image("PP2\week7\clock\sec_hand.png")
         time = datetime.datetime.now()
         h_angle = time.hour * 30
         m_angle = time.minute * 6

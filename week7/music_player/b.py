@@ -2,7 +2,7 @@ import pygame
 import os
 from tinytag import TinyTag
 
-path = r"week7\music_player\songs"
+path = r"PP2\week7\music_player\songs"
 
 _sound_library = {}
 def play_sound(path):
