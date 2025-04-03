@@ -80,6 +80,12 @@ class Snake:
             self.body.append(Point(head.x, head.y))
             food.generate_random_pos(CELL)
 
+    def check_self_collision(self):
+        head = self.body[0]
+        for i in range(1, len(self.body)):
+            if head.x == self.body[i].x and head.y == self.body[i].y:
+                return True
+
 
 
 class Food(pygame.sprite.Sprite):
@@ -212,7 +218,7 @@ class MenuScene(SceneBase):
         super().__init__()
         self.menu_items = ["Play", "Continue", "Options", "Quit"]
         self.active_index = 0
-        self.font = pygame.font.SysFont("sfpro", 60)
+        self.font = pygame.font.SysFont("sfpro", 60, True)
     
     def ProcessInput(self, events, pressed_keys):
         for event in events:
@@ -220,6 +226,8 @@ class MenuScene(SceneBase):
                 if event.key == pygame.K_RETURN and self.active_index == 0:
                     # Move to the next scene when the user pressed Enter
                     self.SwitchToScene(GameScene())
+                elif event.key == pygame.K_RETURN and self.active_index == 1:
+                    self.SwitchToScene(EndScene(5, 1))
                 elif event.key == pygame.K_RETURN and self.active_index == 3:
                     self.Terminate()
                 elif event.key == pygame.K_DOWN:
@@ -244,7 +252,44 @@ class MenuScene(SceneBase):
             rendered_text = self.font.render(text, True, colorBLACK)
             screen.blit(rendered_text, (60, i * 60 + 60))
 
+class EndScene(SceneBase):
+    def __init__(self, score, level):
+        super().__init__()
+        self.score = score
+        self.level = level
 
+        # fonts
+        self.font_large = pygame.font.SysFont("sfpro", 72, True)
+        self.font_small = pygame.font.SysFont("sfpro", 36, True)
+        # text
+        self.text_end_game = self.font_large.render("ENDGAME", True,colorBLACK)
+        self.text_score = self.font_small.render(f"Score: {self.score}", True,colorBLACK)
+        self.text_level = self.font_small.render(f"Level: {self.level}", True,colorBLACK)
+        self.text_continue = self.font_small.render(f"Press ENTER to continue", True,colorBLACK)
+        
+    
+    def ProcessInput(self, events, pressed_keys):
+        for event in events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                # Move to the next scene when the user pressed Enter
+                self.SwitchToScene(MenuScene())
+
+    def Update(self):
+        pass
+
+    def Render(self, screen):
+        screen.fill(colorRED)
+
+        screen_rect = screen.get_rect()
+        text_end_game_rect = self.text_end_game.get_rect(center = (screen_rect.width // 2, screen_rect.height // 2 - 50))
+        text_score_rect = self.text_score.get_rect(center = (screen_rect.width // 2, screen_rect.height // 2))
+        text_level_rect = self.text_level.get_rect(center = (screen_rect.width // 2, screen_rect.height // 2 + 40))
+        text_continue_rect = self.text_continue.get_rect(center = (screen_rect.width // 2, screen_rect.height // 2 + 80))
+
+        screen.blit(self.text_score, text_score_rect)
+        screen.blit(self.text_end_game, text_end_game_rect)
+        screen.blit(self.text_level, text_level_rect)
+        screen.blit(self.text_continue, text_continue_rect)
 
 class GameScene(SceneBase):
 
@@ -275,16 +320,16 @@ class GameScene(SceneBase):
     def ProcessInput(self, events, pressed_keys):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT and self.snake.dx != -1:
                     self.snake.dx = 1
                     self.snake.dy = 0
-                elif event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT and self.snake.dx != 1:
                     self.snake.dx = -1
                     self.snake.dy = 0
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN and self.snake.dy != -1:
                     self.snake.dx = 0
                     self.snake.dy = 1
-                elif event.key == pygame.K_UP:
+                elif event.key == pygame.K_UP and self.snake.dy != 1:
                     self.snake.dx = 0
                     self.snake.dy = -1
             if event.type == self.TIMED_FOOD_KD: # TIMED FOOD
@@ -298,12 +343,13 @@ class GameScene(SceneBase):
                 self.TO_SPAWN_TIMED_FOOD = True
         
     def Update(self):
+        if self.snake.check_self_collision():
+                self.SwitchToScene(EndScene(self.snake.SCORE, self.snake.LEVEL))
         max_x = WIDTH // self.CELL - 1
         max_y = GAME_HEIGHT // self.CELL - 1
-        self.snake.move(max_x, max_y)
         for entity in self.foods:
-            self.snake.check_collision(entity, self.CELL)
-
+                self.snake.check_collision(entity, self.CELL)
+        self.snake.move(max_x, max_y)
         if self.TO_SPAWN_TIMED_FOOD: 
             pygame.time.set_timer(self.TIMED_FOOD_KD, 2000, 1)
             self.TO_SPAWN_TIMED_FOOD = False

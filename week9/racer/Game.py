@@ -5,7 +5,7 @@ import random, time
 
 #Initialzing 
 pygame.init()
-path = r"week8\racer\source"
+path = r"source"
 
 #Setting up FPS 
 FPS = 60
