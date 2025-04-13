@@ -176,8 +176,7 @@ def run_game(width, height, starting_scene):
         global FPS
         clock.tick(FPS)
 
-# The rest is code where you implement your game using the Scenes model
-
+# TScene models
 class TitleScene(SceneBase):
     font_large = pygame.font.SysFont("Comic Sans MS", 72, True)
     font_small = pygame.font.SysFont("Comic Sans MS", 36, True)
@@ -262,10 +261,10 @@ class EndScene(SceneBase):
         self.font_large = pygame.font.SysFont("sfpro", 72, True)
         self.font_small = pygame.font.SysFont("sfpro", 36, True)
         # text
-        self.text_end_game = self.font_large.render("ENDGAME", True,colorBLACK)
-        self.text_score = self.font_small.render(f"Score: {self.score}", True,colorBLACK)
-        self.text_level = self.font_small.render(f"Level: {self.level}", True,colorBLACK)
-        self.text_continue = self.font_small.render(f"Press ENTER to continue", True,colorBLACK)
+        self.text_end_game = self.font_large.render("ENDGAME", True,colorRED)
+        self.text_score = self.font_small.render(f"Score: {self.score}", True,colorRED)
+        self.text_level = self.font_small.render(f"Level: {self.level}", True,colorRED)
+        self.text_continue = self.font_small.render(f"Press ENTER to continue", True,colorRED)
         
     
     def ProcessInput(self, events, pressed_keys):
@@ -278,7 +277,7 @@ class EndScene(SceneBase):
         pass
 
     def Render(self, screen):
-        screen.fill(colorRED)
+        screen.fill(colorBLACK)
 
         screen_rect = screen.get_rect()
         text_end_game_rect = self.text_end_game.get_rect(center = (screen_rect.width // 2, screen_rect.height // 2 - 50))
