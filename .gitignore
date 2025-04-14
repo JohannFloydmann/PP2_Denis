@@ -1,2 +1,4 @@
 test/
 venv/
+*.ini
+__pycache__/
