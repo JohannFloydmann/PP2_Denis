@@ -31,7 +31,7 @@ def create_table():
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
 
-def csv_to_table(filename):
+def read_csv(filename):
     # csv file to db insert   
     command = f"""INSERT INTO Users(user_name, user_phone) VALUES(%s, %s)"""
     try:
@@ -39,12 +39,15 @@ def csv_to_table(filename):
             # execute the command
             with open(filename, "r") as csvfile:
                 csvreader = csv.reader(csvfile, delimiter=',')
+                rows = 0
                 for row in csvreader:
                     # print(row)
                     name, telephone = row
                     # print(id, name, telephone)
                     cur.execute(command, (name, telephone))
                     conn.commit()
+                    rows+=1
+                print(f"Added rows: {rows}")
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
         
@@ -61,9 +64,115 @@ def get_all_users():
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
+def get_by_name(name):
+    # get user by name
+    command = """SELECT * FROM Users WHERE user_name = %s"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command, (name,))
+            rows = cur.fetchall()
+            print("The number of users: ", cur.rowcount)
+            for row in rows:
+                print(row)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def get_by_phone(phone):
+    # get user by phone
+    command = """SELECT * FROM Users WHERE user_phone = %s"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command, (phone,))
+            rows = cur.fetchall()
+            print("The number of users: ", cur.rowcount)
+            for row in rows:
+                print(row)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def insert_user(name, telephone):
+    # insert user
+    command = """INSERT INTO Users(user_name, user_phone) VALUES(%s, %s)"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command, (name, telephone))
+            conn.commit()
+            print(f"Inserted {cur.rowcount} row(s)")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def update_by_name(name, telephone):
+    # update user by name
+    command = """UPDATE Users SET user_phone = %s WHERE user_name = %s"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command, (telephone, name))
+            conn.commit()
+            print(f"Updated {cur.rowcount} row(s)")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def update_by_phone(phone, name):
+    # update user by phone
+    command = """UPDATE Users SET user_name = %s WHERE user_phone = %s"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command, (name, phone))
+            conn.commit()
+            print(f"Updated {cur.rowcount} row(s)")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def delete_by_name(name):
+    # delete user by name
+    command = """DELETE FROM Users WHERE user_name = %s"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command, (name,))
+            conn.commit()
+            print(f"Deleted {cur.rowcount} row(s)")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def delete_by_phone(phone):
+    # delete user by phone
+    command = """DELETE FROM Users WHERE user_phone = %s"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command, (phone,))
+            conn.commit()
+            print(f"Deleted {cur.rowcount} row(s)")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def delete_all_users():
+    # delete all users
+    command = """DELETE FROM Users"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command)
+            conn.commit()
+            print(f"Deleted {cur.rowcount} row(s)")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def drop_table():
+    # drop table
+    command = """DROP TABLE IF EXISTS Users"""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(command)
+            conn.commit()
+            print("Table dropped.")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+def close_connection():
+    # close connection
+    conn.close()
+    print('Connection closed.')
 
 if __name__ == '__main__':
     
     create_table()
-    csv_to_table("users.csv")
-    get_all_users()
+    close_connection()
